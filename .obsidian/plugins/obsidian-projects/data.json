@@ -1,0 +1,120 @@
+{
+  "version": 2,
+  "projects": [
+    {
+      "fieldConfig": {},
+      "defaultName": "",
+      "templates": [],
+      "excludedNotes": [],
+      "isDefault": false,
+      "dataSource": {
+        "kind": "folder",
+        "config": {
+          "path": "test",
+          "recursive": false
+        }
+      },
+      "newNotesFolder": "",
+      "views": [
+        {
+          "config": {},
+          "filter": {
+            "conjunction": "and",
+            "conditions": []
+          },
+          "colors": {
+            "conditions": []
+          },
+          "sort": {
+            "criteria": []
+          },
+          "id": "9d88cbf8-561d-4440-bf8d-fec6938838cb",
+          "name": "表格",
+          "type": "table"
+        },
+        {
+          "config": {},
+          "filter": {
+            "conjunction": "and",
+            "conditions": []
+          },
+          "colors": {
+            "conditions": []
+          },
+          "sort": {
+            "criteria": []
+          },
+          "id": "ebdf628d-dd35-4652-9230-43ecc3684768",
+          "name": "日历",
+          "type": "calendar"
+        },
+        {
+          "config": {},
+          "filter": {
+            "conjunction": "and",
+            "conditions": []
+          },
+          "colors": {
+            "conditions": []
+          },
+          "sort": {
+            "criteria": []
+          },
+          "id": "7829215a-6401-44e4-b8ec-89d43dbd7b43",
+          "name": "看板",
+          "type": "board"
+        }
+      ],
+      "id": "702e2003-3980-43a2-8304-39e3ce210f9b",
+      "name": "11111"
+    }
+  ],
+  "archives": [
+    {
+      "fieldConfig": {},
+      "defaultName": "",
+      "templates": [],
+      "excludedNotes": [],
+      "isDefault": false,
+      "dataSource": {
+        "kind": "folder",
+        "config": {
+          "path": "",
+          "recursive": false
+        }
+      },
+      "newNotesFolder": "",
+      "views": [
+        {
+          "config": {},
+          "filter": {
+            "conjunction": "and",
+            "conditions": []
+          },
+          "colors": {
+            "conditions": []
+          },
+          "sort": {
+            "criteria": []
+          },
+          "id": "812abfee-5bc5-43b0-ab99-b65cafc9b540",
+          "name": "日历",
+          "type": "calendar"
+        }
+      ],
+      "id": "5e40f67d-3606-4f95-b74e-ff3de3d8ee34",
+      "name": "未命名项目"
+    }
+  ],
+  "preferences": {
+    "projectSizeLimit": 1000,
+    "frontmatter": {
+      "quoteStrings": "PLAIN"
+    },
+    "locale": {
+      "firstDayOfWeek": "monday"
+    },
+    "commands": [],
+    "linkBehavior": "open-editor"
+  }
+}
