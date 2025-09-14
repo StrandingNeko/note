@@ -1,6 +1,6 @@
 {
   "promptDelete": false,
-  "attachmentFolderPath": "/",
+  "attachmentFolderPath": "./附件",
   "newLinkFormat": "relative",
   "useMarkdownLinks": true
 }
