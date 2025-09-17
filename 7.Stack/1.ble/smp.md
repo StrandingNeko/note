@@ -9,6 +9,7 @@
 如果用户需要主动删除配对设备，点击配对设备右边的“设置”菜单，出现如下界面，选择“取消配对”或者“忽略该设备”，设备的配对信息即被手机删除。
 
 ![](assets/smp/0cf64d3613d42fb726904528e6fbba2d_MD5.png)
+
 ![](assets/smp/99a3e5b8d0e428fda06cfda4ab04ca62_MD5.png)
 
 **Bonding（绑定）** ，配对过程中会生成一个长期密钥<span style="background:#fff88f">（LTK，long-term Key）</span>，如果配对双方把这个LTK存储起来放在Flash中，那么这两个设备 **再次重连** 的时候，就可以跳过配对流程，而直接使用LTK对蓝牙连接进行加密，设备的这种状态称为bonding。如果paring过程中不存储LTK（不分发LTK）也是可以的，paring完成后连接也是加密的，但是如果两个设备再次重连，那么就需要重走一次paring流程，否则两者还是明文通信。
@@ -41,7 +42,7 @@
 
 **IRK（Identity Resolving Key，蓝牙设备地址解析密钥）** ，有些蓝牙设备的地址为可解析的随机地址，比如iPhone手机，由于他们的地址随着时间会变化，那如何确定这些变化的地址都来自同一个设备呢？答案就是IRK，IRK通过解析变化的地址的规律，从而确定这些地址是否来自同一个设备，换句话说，IRK可以用来识别蓝牙设备身份，因此其也称为Identity information。IRK一般由设备出厂的时候按照一定要求自动生成。
 
-**Identity Address（设备唯一地址）** ，蓝牙设备地址包括public，random static， private resolvable，random unresolved共四类。如果设备不支持privacy，那么identity address就等于public或者random static设备地址。如果设备支持privacy，即使用private resolvable蓝牙设备地址，在这种情况下，虽然其地址每隔一段时间会变化一次，但是identity address仍然保持不变，其取值还是等于内在的public或者random static设备地址。Identity Address和IRK都可以用来唯一标识一个蓝牙设备。
+**Identity Address（设备唯一地址）** ，蓝牙设备地址包括 public，random static， private resolvable，random unresolved共四类。如果设备不支持privacy，那么identity address就等于public或者random static设备地址。如果设备支持privacy，即使用private resolvable蓝牙设备地址，在这种情况下，虽然其地址每隔一段时间会变化一次，但是identity address仍然保持不变，其取值还是等于内在的public或者random static设备地址。Identity Address和IRK都可以用来唯一标识一个蓝牙设备。
 
 **IO capabilities（输入输出能力）** ，是指蓝牙设备的输入输出能力，比如是否有键盘，是否有显示器，是否可以输入Yes/No两个确认值。
 
@@ -51,20 +52,22 @@
 
 Paring包含三个阶段：
 
-<span style="background:#40a9ff">阶段1：配对特性交换</span>，即交换各自都支持哪些配对特性，比如支不支持SC，支不支持MITM，支不支持OOB，以及它的输入输出能力等
+<span style="background:#40a9ff">阶段1：配对特性交换</span>，即交换各自都支持哪些配对特性，比如支不支持 SC，支不支持 MITM，支不支持 OOB，以及它的输入输出能力等。
 
-<span style="background:#40a9ff">阶段2：密钥生成阶段</span>，legacy paring和LESC paring两者的区别就在这里，因此后续我们会分开阐述legacy paring和SC paring的阶段2
+<span style="background:#40a9ff">阶段2：密钥生成阶段</span>，Legacy Paring 和 Secure Connections Paring 两者的区别就在这里，因此后续我们会分开阐述 Legacy Paring 和 Secure Connections Paring 的阶段2。
 
-- Legacy paring：STK生成（注：legacy paring的LTK生成跟配对流程无关，如前所述，其是由从机自己生成的）
-- SC paring：LTK生成
+- Legacy Paring：STK 生成（注：legacy Paring 的 LTK 生成跟配对流程无关，如前所述，其是由从机自己生成的）
+- Secure Connections Paring：LTK 生成
 
-<span style="background:#40a9ff">阶段3：通过蓝牙空中包分发一些秘密信息</span>。Legacy paring需要分发LTK，IRK等，而SC paring只需分发IRK。秘密信息分发之前，必须保证连接已加密。
+<span style="background:#40a9ff">阶段3：通过蓝牙空中包分发一些秘密信息</span>。Legacy Paring 需要分发 LTK、IRK 等，而 SC Paring 只需分发 IRK。秘密信息分发之前，必须保证连接已加密。
 
 Paring流程如下所示：
 
 ![](assets/smp/3f77cf5d43f7018fc98f16d079afe404_MD5.png)
 
-## 2.1 Pairing Feature Exchange
+## 2.1 Phase 1: Pairing feature exchange
+
+![](assets/smp/957436f58a59c0508c76fbe89d234c34_MD5.png)
 
 当配对开始时，**配对特性交换（Pairing Feature Exchange）** 应由 **发起设备（initiating device）** 启动。如果响应设备不支持配对，或者无法执行配对，那么响应设备应当使用 **配对失败（Pairing Failed）** 消息进行响应，并携带错误码 **“不支持配对（Pairing Not Supported）”**；否则，它应当使用 **配对响应（Pairing Response）** 消息进行回应。
 
@@ -110,15 +113,120 @@ Paring流程如下所示：
 
 ![](assets/smp/fbabc8e47dac1d910aa1ad7f75cf8522_MD5.png)
 
-## 2.2 Key Generation
+## 2.2 Phase 2: Authenticating and encrypting
 
-根据阶段1的IO输入输出能力以及是否存在OOB，阶段2存在如下几种配对方式（或者说认证方式）：
+根据阶段1的 IO 输入输出能力以及是否存在OOB，阶段2存在如下几种配对方式（或者说认证方式）：
 - Just works
 - Numeric comparison（LESC才有）
 - Passkey
 - OOB
 
+如果两端设备都没有在 Authentication Requirements Flags 中设置 MITM 标志，那么 IO 能力会被忽略，Just Works 相关的模型会被使用。
+
+在 Legacy Pairing 中，若两端设备都支持 OOB，则 Authentication Requirements Flags 会被忽略，并使用 OOB 配对方式，否则，设备的 IO 能力会被用于选择配对方式。
+
+在 LE Secure Connections Pairing 中，只要一端设备支持 OOB，则  Authentication Requirements Flags 会被忽略，并使用 OOB 配对方式，否则，设备的 IO 能力会被用于选择配对方式。
+
+![](assets/smp/328e544c1c2a5499005048af4fd87244_MD5.png)
+
+![](assets/smp/557143cb0e706862c2893ba6c56f3881_MD5.png)
+
+当至少有一个设备不支持 LE Secure Connections 时（即使用 Legacy Pairing）的 STK 生成方法。
+
+![](assets/smp/622c8cfa7beef09d51ef4d9cc7db6779_MD5.png)
+
+当两个设备都支持 LE Secure Connections 时的 LTK 生成方法。
+
+![](assets/smp/20ff3e783d710d6cc9a0ec47f6eba34f_MD5.png)
+
+因此，从 IO 能力角度看，有三种配对方式：
+- Just works
+- Numeric comparison（LESC才有）
+- Passkey
+
+其中，Just works 没有 MITM 功能，Passkey 和 Numeric comparison 具有 MITM 功能，也因此，有 MITM 功能，则必须要求有一定的 IO 能力，不能是 NoInputNoOutput。
+
+至于 OOB 方式有没有 MITM 保护，取决于 OOB 通信的安全性，如果 OOB 通信具备 MITM 保护，那么蓝牙也具备 MITM 保护，否则就不具备。
 ### 2.2.1 Legacy Pairing
+
+Legacy Pairing 的整个流程围绕 STK 生成展开，设备的认证是通过设备 A 和 B 经由 TK 生成一个确认数，如果这个确认数相同，则认证通过。
+
+TK 的生成方式取决于配对方式：
+- Just works，TK 默认为全 0；
+
+  ![](assets/smp/72ee011f3d6de072b17dd49b35d40c22_MD5.png)
+
+- Passkey，TK 由6位 passkey 扩展而来；
+
+  ![](assets/smp/41dd388baae8a5320255ebffbc623b0d_MD5.png)
+
+- OOB，TK 直接由 OOB 数据提供。
+
+  ![](assets/smp/a8b9af47226d75e23c572e0e15f151d4_MD5.png)
+
+**配对完成之后，连接就会加密，而且加密的密钥是STK，而不是LTK**。（仅第一次配对如此？）
+
+### 2.2.2 LESC Pairing
+
+#### Public Key Exchange
+
+跟 Legacy Paring 不一样的地方，LESC Pairing 是通过 Diffie-Hellman 算法直接生成 LTK，因此它不需要生成 TK 和 STK。为了生成 LTK，双方需要先交换公钥，流程如下所示：
+
+![](assets/smp/38452dc70a3714183d7fcac782318db9_MD5.png)
+
+公钥交换后，设备A和B就开始独自计算各自的 DHKey，按照 D-H 算法，他们俩算出的 DHKey会是同一个。而 LTK 和 MacKey 就是通过这个 DHKey 加密一系列数据而得到的。
+
+Legacy Paring 在整个配对流程中只做一次认证，而 LESC Paring 会做两次认证：
+1. 设备 A 和 B 各生成一个随机数，然后认证这个随机数对不对；
+2. 设备 A 和 B 通过 MacKey 各生成一个检查值，对端设备确认这个值对不对。
+
+#### Authentication stage 1
+
+以 LESC Just Works or Numeric Comparison 为例，其第一阶段认证流程如下所示：
+
+![](assets/smp/0c601307e76003f3c04b0905979f5710_MD5.png)
+
+![](assets/smp/f176ef8200a3cb3eca366945b6a62578_MD5.png)
+
+以 LESC Passkey Entry 为例，其第一阶段认证流程如下所示：
+
+![](assets/smp/f695c6ddf1b67cd654769c5974ebfd50_MD5.png)
+
+![](assets/smp/d898e5022e73cd13a50764cf20b94a3a_MD5.png)
+
+以 LESC OOB 为例，其第一阶段认证流程如下所示：
+
+![](assets/smp/a694bdfba0079597b24ed79011068bfc_MD5.png)
+
+![](assets/smp/f05e302135b6c05aa6482f136fad018c_MD5.png)
+#### Authentication stage 2
+
+第二阶段认证流程如下所示：
+
+![](assets/smp/71960d046ff4f47a813780961848fbdf_MD5.png)
+
+一旦 DHKey 生成完成，即可基于 DHKey 计算 LTK。
+
+![](assets/smp/91018bc2e956b5e778394a09c88835b0_MD5.png)
+
+一旦 LTK 计算和认证阶段 1 完成，就会通过交换使用 DHKey 生成的 **DHKey Check** 值来验证生成的 DHKey。
+
+如果验证成功，那么两个设备就已经完成了向用户显示相关信息的过程，因此 Host 可以停止显示这些信息。
+
+![](assets/smp/8fb4706bae1616d9647aa170373530a6_MD5.png)
+
+## 2.3 Phase 3: Transport specific key distribution
+
+一旦连接加密了，主机和从机之间就可以分发一些秘密信息。
+
+如果是 Legacy Pairing，Central 和 Peripheral 间可能会分发：
+- LTK, EDIV, and Rand
+- IRK
+- CSRK
+
+如果是 
+
+![](assets/smp/e798f5e9dfe2d4bcbf423d94187546a9_MD5.png)
 
 
 
